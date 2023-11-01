@@ -25,8 +25,11 @@ export function Body() {
     <>
       <div className="mx-10 mt-5    flex flex-col">
         <div className="text-center text-2xl my-10 font-bold text-gray-800 ">
-          Welcome hunter, your <span className="text-purple-700">feed</span> of
-          the day is here ...
+          Welcome hunter, your{" "}
+          <span className="bg-gradient-to-r from-purple-600 to-purple-700 bg-clip-text text-transparent">
+            feed
+          </span>{" "}
+          of the day is here ...
         </div>
         <div className="flex justify-start items-center flex-col space-y-2">
           <div className="flex flex-col space-y-4">

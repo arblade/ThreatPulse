@@ -1,5 +1,6 @@
 import { Article } from "./Body";
 import { Badge } from "@/components/ui/badge";
+import { Bookmark } from "lucide-react";
 export function Card({ article }: { article: Article }) {
   return (
     <>
@@ -16,17 +17,25 @@ export function Card({ article }: { article: Article }) {
           </div>
           <div className="">
             {" "}
-            <div className="font-semibold mt-1  ">{article.title}</div>
+            <div className="font-semibold mt-1 flex relative ">
+              <div>{article.title} </div>
+              <div className="hover:bg-gray-200 rounded-lg p-1 absolute right-1">
+                <Bookmark size={16} className="text-gray-800" />
+              </div>
+            </div>
             <div className="font-normal text-gray-600 mt-1 max-h-[4rem] overflow-clip text-[0.9rem]">
               {article.description}
             </div>
-            <div className="flex space-x-1 mt-1 mb-[0.2rem] ">
-              {article.badges.map((bg) => (
-                <div className="">
-                  {" "}
-                  <Badge variant="outline">{bg}</Badge>
-                </div>
-              ))}
+            <div className="flex space-x-1 mt-1 mb-[0.2rem] relative">
+              <div className="flex space-x-1">
+                {article.badges.map((bg) => (
+                  <div className="">
+                    {" "}
+                    <Badge variant="outline">{bg}</Badge>
+                  </div>
+                ))}
+              </div>
+              <div></div>
             </div>
           </div>
         </div>
