@@ -1,2 +1,6 @@
 # ThreatPulse
-gather open source cti
+
+## MVP
+
+A simple interface that gather multiple infos from open sources, in a feed.
+Like a simple feedly.
