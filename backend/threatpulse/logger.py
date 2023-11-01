@@ -3,7 +3,7 @@ import logging
 from .utils import rich_print
 
 class ColorFormatter(logging.Formatter):
-    fmt = "[[{}]%(levelname)s[/]] [dim]%(name)-8s[/] || %(message)s"
+    fmt = "[[{}]%(levelname)s[/]]] [dim]%(name)-8s[/] || %(message)s"
     
     COLORS = {
         logging.DEBUG: "magenta",
@@ -18,7 +18,7 @@ class ColorFormatter(logging.Formatter):
         formatter = logging.Formatter(log_fmt)
         head, *rest = formatter.format(record).split("||")
         
-        return rich_print(head) + "||".join(rest)
+        return rich_print(head, highlight=False) + "||".join(rest)
     
 def setup_logger(level=logging.DEBUG) -> logging.Logger:
     # get root logger

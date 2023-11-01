@@ -4,6 +4,7 @@ from bs4 import BeautifulSoup
 from bs4.element import NavigableString
 
 from .base import BaseFeedHandler
+from ..mdconverter import MDConverter
 
 logger = logging.getLogger("analyst1")
 
@@ -20,10 +21,23 @@ class Analyst1Handler(BaseFeedHandler):
         
     def parse(self, content: str):
         soup = BeautifulSoup(content, "html.parser")
-        with open("res.html", "w") as f:
-            f.write(content) 
-        # # extract iocs
-        # iocs = [ioc.text for ioc in soup.find(id="iocs").findNext("pre").contents if isinstance(ioc, NavigableString)]
+        post = soup.findAll("article", {"class": "post"})[0]       
+        
+        # cleanup the soup
+        for div in post.find_all("div", {'class': 'cta'}): 
+            div.decompose()
+        for el in post.find_all("span", {"class": "ez-toc-title-toggle"}):
+            el.decompose()
+
+        
+        # extract iocs
+        # iocs = [ioc.text for ioc in post.find(id="iocs").findNext("pre").contents if isinstance(ioc, NavigableString)]
         # iocs = [ioc for ioc_list in iocs for ioc in ioc_list.split(" ")]
         
-        # return iocs
+        # get article as markdown
+        md_text = MDConverter(heading_style="ATX").convert_soup(post)
+        md_text.strip()
+        with open("res.md", "w") as f:
+            f.write(md_text)
+        
+        return ""

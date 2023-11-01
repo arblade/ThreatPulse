@@ -2,11 +2,12 @@ import re
 import logging
 from bs4 import BeautifulSoup
 from bs4.element import NavigableString
-import markdownify
 
 from .base import BaseFeedHandler
+from ..mdconverter import MDConverter
 
 logger = logging.getLogger("checkpointresearch")
+
 
 class CheckPointResearchHandler(BaseFeedHandler):
     
@@ -22,14 +23,14 @@ class CheckPointResearchHandler(BaseFeedHandler):
     def parse(self, content: str):
         soup = BeautifulSoup(content, "html.parser")
         post = soup.find(id="single-post")       
-        post_content = post.encode_contents().decode()
         
         # extract iocs
         iocs = [ioc.text for ioc in post.find(id="iocs").findNext("pre").contents if isinstance(ioc, NavigableString)]
         iocs = [ioc for ioc_list in iocs for ioc in ioc_list.split(" ")]
         
         # get article as markdown
-        md_text = markdownify.markdownify(post_content)
+        md_text = MDConverter(heading_style="ATX").convert_soup(post)
+        md_text.strip()
         with open("res.md", "w") as f:
             f.write(md_text)
         
