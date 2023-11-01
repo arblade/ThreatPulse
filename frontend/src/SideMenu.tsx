@@ -4,7 +4,7 @@ export function SideMenu() {
   const [activeMode, setActiveMode] = useState("Vigil");
   return (
     <div className="">
-      <div className="flex flex-col space-y-2 ml-4  text-lg mr-4">
+      <div className="flex flex-col space-y-2 ml-4  text-md mr-4">
         <div
           className={`flex items-center justify-start space-x-2 hover:bg-gray-100 px-2 py-1 hover:cursor-pointer rounded-lg pl-4 ${
             activeMode == "Vigil" ? "text-purple-600" : ""

@@ -26,7 +26,7 @@ export default function Header() {
         <div className="flex-grow flex-col">
           <div className="flex flex-col justify-end align-bottom items-end"></div>{" "}
         </div>
-        <div className="mb-8 flex items-center space-x-4 justify-start ml-8 mt-4 text-md">
+        <div className="mb-8 flex items-center space-x-4 justify-start ml-8 mt-4 text-md p-1 hover:bg-gray-100 rounded-lg mr-8 pl-2 py-2 hover:cursor-pointer">
           <Avatar className="h-8 w-8">
             <AvatarImage src="https://github.com/shadcn.png" />
             <AvatarFallback>CN</AvatarFallback>
