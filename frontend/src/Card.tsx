@@ -20,7 +20,7 @@ export function Card({ article }: { article: Article }) {
             <div className="font-normal text-gray-600 mt-1 max-h-[4rem] overflow-clip text-[0.9rem]">
               {article.description}
             </div>
-            <div className="flex space-x-1 mt-1 mb-[0.2rem]">
+            <div className="flex space-x-1 mt-1 mb-[0.2rem] ">
               {article.badges.map((bg) => (
                 <div className="">
                   {" "}
