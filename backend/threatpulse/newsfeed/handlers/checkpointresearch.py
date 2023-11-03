@@ -1,5 +1,6 @@
 import re
 import logging
+import requests
 from bs4 import BeautifulSoup
 from bs4.element import NavigableString
 
@@ -16,6 +17,7 @@ class CheckPointResearchHandler(BaseFeedHandler):
     
     def __init__(self, url: str) -> "CheckPointResearchHandler":
         super().__init__(url)
+        self.feed_url = "https://research.checkpoint.com/latest-publications/"
         
         # update base headers
         self.headers["Referer"] = "https://research.checkpoint.com/"
@@ -25,13 +27,23 @@ class CheckPointResearchHandler(BaseFeedHandler):
         post = soup.find(id="single-post")       
         
         # extract iocs
-        iocs = [ioc.text for ioc in post.find(id="iocs").findNext("pre").contents if isinstance(ioc, NavigableString)]
-        iocs = [ioc for ioc_list in iocs for ioc in ioc_list.split(" ")]
+        # iocs = [ioc.text for ioc in post.find(id="iocs").findNext("pre").contents if isinstance(ioc, NavigableString)]
+        # iocs = [ioc for ioc_list in iocs for ioc in ioc_list.split(" ")]
         
-        # get article as markdown
-        md_text = MDConverter(heading_style="ATX").convert_soup(post)
-        md_text.strip()
-        with open("res.md", "w") as f:
-            f.write(md_text)
+        # save the article
+        self.save_markdown(post)
         
-        return iocs
+        return []
+    
+    def get_latest_news(self) -> list[str]:
+        urls = []
+        
+        res = requests.get(self.feed_url, headers=self.headers)
+        soup = BeautifulSoup(res.text, "html.parser")
+
+        posts = soup.find("section", {"class": "blog-post-wrapper"})
+        for link in posts.find_all("div", {"class": "button-wrap"}):
+            urls.append(link.find("a")["href"])
+
+        logger.info(f"got {len(urls)} urls from feed")
+        return urls

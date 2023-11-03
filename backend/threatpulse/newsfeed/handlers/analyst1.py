@@ -1,5 +1,6 @@
 import re
 import logging
+import requests
 from bs4 import BeautifulSoup
 
 from .base import BaseFeedHandler
@@ -13,6 +14,7 @@ class Analyst1Handler(BaseFeedHandler):
     
     def __init__(self, url: str) -> "Analyst1Handler":
         super().__init__(url)
+        self.feed_url = "https://analyst1.com/category/blog/"
 
         # update base headers
         self.headers["Referer"] = "https://analyst1.com/category/blog/"
@@ -31,3 +33,16 @@ class Analyst1Handler(BaseFeedHandler):
         file_path = self.save_markdown(post)
         
         return file_path
+    
+    def get_latest_news(self) -> list[str]:
+        urls = []
+        
+        res = requests.get(self.feed_url, headers=self.headers)
+        soup = BeautifulSoup(res.text, "html.parser")
+        
+        for article in soup.find_all("article", {"class": "status-publish"}):
+            link = article.find("a")["href"]
+            urls.append(link)
+        
+        logger.info(f"got {len(urls)} urls from feed")
+        return urls

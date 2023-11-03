@@ -42,7 +42,7 @@ class BaseFeedHandler(metaclass=ABCMeta):
         md_text = md_text.replace("\n\n", "\n")
         
         # get name from url
-        slug_re = re.findall(r"/([\w-]+)?/", self.url, re.IGNORECASE)
+        slug_re = re.findall(r"/([\w-]+)", self.url, re.IGNORECASE)
         if slug_re is None:
             logger.error(f"cannot find the slug in {self.url}")
             return None
@@ -70,5 +70,5 @@ class BaseFeedHandler(metaclass=ABCMeta):
         pass
     
     @abstractmethod
-    def get_latest_news(self):
+    def get_latest_news(self) -> list[str]:
         pass

@@ -53,10 +53,16 @@ def main():
         
     # else testing new features
     elif args.command == "test":
-        from .newsfeed.handlers.bleepingcomputer import BleepingComputer
-        handler = BleepingComputer(None)
-        urls = handler.get_latest_news()
-        for url in urls:
-            handler = BleepingComputer(url)
-            content = handler.fetch()
-            handler.parse(content)
+        from .newsfeed.handlers import HANDLERS
+        
+        for HandlerClass in HANDLERS:
+            logger.info(f"Fetching new content for {HandlerClass.name}")
+            handler = HandlerClass(None)
+            urls = handler.get_latest_news()
+            for url in urls:
+                handler = HandlerClass(url)
+                content = handler.fetch()
+                try:
+                    handler.parse(content)
+                except:
+                    continue

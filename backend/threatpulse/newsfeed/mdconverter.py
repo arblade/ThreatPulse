@@ -39,8 +39,9 @@ class MDConverter(OriginalConverter):
         prefix, suffix, text = chomp(text)
         if not text:
             return ''
-        href = el.get('href')
-        title = el.get('title')
+        href = el.attrs.get('href', None) or ''
+        title = el.attrs.get('title', None) or ''
+
         # For the replacement see #29: text nodes underscores are escaped
         if (self.options['autolinks']
                 and text.replace(r'\_', '_') == href
