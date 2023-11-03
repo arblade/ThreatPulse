@@ -24,8 +24,16 @@ class CheckPointResearchHandler(BaseFeedHandler):
         
     def parse(self, content: str):
         soup = BeautifulSoup(content, "html.parser")
-        post = soup.find(id="single-post")       
+        post = soup.find(id="single-post")
         
+        # cleanup
+        for div in post.find_all("div", {"class": "aside-box"}):
+            div.decompose()
+        for div in post.find_all("div", {"class": "back-to-top"}):
+            div.decompose()
+        for div in post.find_all("div", {"class": "button-wrap"}):
+            div.decompose()
+
         # extract iocs
         # iocs = [ioc.text for ioc in post.find(id="iocs").findNext("pre").contents if isinstance(ioc, NavigableString)]
         # iocs = [ioc for ioc_list in iocs for ioc in ioc_list.split(" ")]

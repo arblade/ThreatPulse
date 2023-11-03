@@ -55,11 +55,11 @@ def main():
     elif args.command == "test":
         from .newsfeed.handlers import HANDLERS
         
-        for HandlerClass in HANDLERS:
+        for HandlerClass in [HANDLERS[0]]:
             logger.info(f"Fetching new content for {HandlerClass.name}")
             handler = HandlerClass(None)
             urls = handler.get_latest_news()
-            for url in urls:
+            for url in [urls[2]]:
                 handler = HandlerClass(url)
                 content = handler.fetch()
                 try:
