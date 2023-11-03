@@ -172,3 +172,5 @@ pyrightconfig.json
 
 # test
 res.*
+data
+db.sqlite

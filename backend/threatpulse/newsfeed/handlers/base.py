@@ -2,6 +2,10 @@ from abc import ABCMeta, abstractmethod
 import re
 import requests
 import logging
+import os
+from bs4 import BeautifulSoup
+
+from ..mdconverter import MDConverter
 
 logger = logging.getLogger("basefeedhandler")
 
@@ -25,9 +29,32 @@ class BaseFeedHandler(metaclass=ABCMeta):
     def __init__(self, url: str) -> "BaseFeedHandler":
         self.url = url
     
-    def fetch(self):
+    def fetch(self) -> str:
         res = requests.get(self.url, headers=self.headers)
         return res.text
+    
+    def save_markdown(self, soup: BeautifulSoup, data_folder: str = "./data") -> str:
+        md_text = MDConverter(self, heading_style="ATX").convert_soup(soup)
+        
+        # post processing
+        md_text = md_text.strip()
+        md_text = md_text.replace("\n\n", "\n")
+        
+        # get name from url
+        slug_re = re.findall(r"/([\w-]+)?/", self.url, re.IGNORECASE)
+        if slug_re is None:
+            logger.error(f"cannot find the slug in {self.url}")
+            return None
+        slug = slug_re[-1]
+        logger.debug(f"save_markdown: slug = {slug}")    
+        
+        # save the text to the disk
+        file_path = os.path.join(data_folder, f"{slug}.md")
+        with open(file_path, "w") as f:
+            f.write(md_text)
+        
+        # returrn the path
+        return file_path
             
     @abstractmethod
     def parse(self, content: str):

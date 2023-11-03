@@ -3,12 +3,10 @@ import requests
 from base64 import b64encode
 from markdownify import MarkdownConverter as OriginalConverter, chomp
 
-from .handlers.base import BaseFeedHandler
-
 logger = logging.getLogger("mdconverter")
 
 class MDConverter(OriginalConverter):
-    def __init__(self, handler=BaseFeedHandler, **options):
+    def __init__(self, handler, **options):
         super().__init__(**options)
         self.handler = handler
     

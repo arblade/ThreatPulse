@@ -26,6 +26,7 @@ def main():
     if args.command == "parse":
         from .newsfeed.feed import find_handler
         from .newsfeed.handlers.base import BaseFeedHandler
+        from .db.db import DB
 
         # get the correct handler for the url
         HandlerClass: BaseFeedHandler = find_handler(args.url)
@@ -37,7 +38,10 @@ def main():
         # fetch and parse the content
         content = handler.fetch()
         res = handler.parse(content)
-        # print(res)
+        print("file saved to :", res)
+        
+        # init the db
+        db = DB()
         
     # serving the API
     elif args.command == "serve":
