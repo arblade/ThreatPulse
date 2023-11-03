@@ -4,7 +4,10 @@ import { Bookmark } from "lucide-react";
 export function Card({ article }: { article: Article }) {
   return (
     <>
-      <div className="rounded-lg max-w-[40rem] max-h-[9rem] break-words hover:bg-gray-100 py-1 px-1 hover:cursor-pointer rounded-xl">
+      <div
+        onClick={() => window.open(article.link, "_blank")}
+        className="rounded-lg max-w-[40rem] max-h-[9rem] break-words hover:bg-gray-100 py-1 px-1 hover:cursor-pointer rounded-xl"
+      >
         <div className="flex space-x-4">
           <div className="object-fill max-h-5rem max-w-5rem inline-flex relative">
             <img

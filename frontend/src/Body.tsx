@@ -1,7 +1,10 @@
 import { useEffect, useState } from "react";
 import { Card } from "./Card";
 import { SideMenu } from "./SideMenu";
-
+import { useQuery } from "react-query";
+import Loader from "./components/Loader";
+import { useToast } from "@/components/ui/use-toast";
+import { Toaster } from "@/components/ui/toaster";
 export interface Article {
   title: string;
   description: string;
@@ -12,16 +15,28 @@ export interface Article {
 }
 
 export function Body() {
-  const [articles, setArticles] = useState<Article[]>([]);
+  const { toast } = useToast();
+  const {
+    isLoading,
+    error,
+    data: articles,
+  } = useQuery<Article[], Error>("repoData", () => {
+    return fetch("/api/get_articles").then((res) => {
+      if (!res.ok) {
+        throw new Error(res.statusText);
+      }
+      return res.json();
+    });
+  });
   useEffect(() => {
-    fetch(window.origin + "/api/get_articles")
-      .then((data) => {
-        return data.json();
-      })
-      .then((data) => {
-        setArticles(data);
+    if (error) {
+      toast({
+        title: "Network error",
+        description: error.message,
       });
-  }, []);
+    }
+  }, [error, toast]);
+
   return (
     <>
       <div className="flex">
@@ -35,12 +50,18 @@ export function Body() {
           </div>
           <div className="flex justify-start items-center flex-col space-y-2">
             <div className="flex flex-col space-y-4">
-              {" "}
-              {articles.map((art) => (
+              {isLoading ? (
+                <Loader />
+              ) : (
                 <div>
-                  <Card article={art} />
+                  {articles &&
+                    articles!.map((art) => (
+                      <div key={"art_" + art.title}>
+                        <Card article={art} />
+                      </div>
+                    ))}
                 </div>
-              ))}
+              )}
             </div>
           </div>
         </div>

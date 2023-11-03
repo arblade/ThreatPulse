@@ -1,7 +1,7 @@
 @font-face {
   font-family: 'Geist';
   src: url('/fonts/Geist-Regular.otf') format('opentype');
-  font-weight: normal;
+  font-weight: 400;
   font-style: normal;
 
   /* Add other font properties like font-weight and font-style if needed */
@@ -15,7 +15,7 @@
 }
 
 @font-face {
-  font-family: 'YourFontName';
+  font-family: 'Geist';
   src:url('/fonts/Geist-Medium.otf') format('opentype');
   font-weight: 500; /* 500 represents medium weight */
   font-style: normal;
