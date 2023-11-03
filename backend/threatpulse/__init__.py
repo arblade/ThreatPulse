@@ -17,6 +17,9 @@ def parse_args():
     article_parser = subparsers.add_parser("parse", help="Parse an URL")
     article_parser.add_argument("url", help="Url to parse")
     
+    # test something
+    test_parser = subparsers.add_parser("test", help="Test a new feature")
+    
     return parser.parse_args()
 
 def main():
@@ -47,3 +50,13 @@ def main():
     elif args.command == "serve":
         import uvicorn
         uvicorn.run(app="threatpulse.api.api:app", host=args.host, port=args.port, log_level=logger.level)
+        
+    # else testing new features
+    elif args.command == "test":
+        from .newsfeed.handlers.bleepingcomputer import BleepingComputer
+        handler = BleepingComputer(None)
+        urls = handler.get_latest_news()
+        for url in urls:
+            handler = BleepingComputer(url)
+            content = handler.fetch()
+            handler.parse(content)

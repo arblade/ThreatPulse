@@ -20,9 +20,13 @@ class MDConverter(OriginalConverter):
         if src == "":
             return ""
         
+        # if the source is already base64, return it
+        if ";base64," in src:
+            return "![%s](%s%s)" % (alt, src, title_part)
+        
         # fetch the image
         logger.debug(f"Downloading img from {src}")
-        res = requests.get(el["src"], headers=self.handler.headers)
+        res = requests.get(src, headers=self.handler.headers)
         img_64 = b64encode(res.content).decode()
             
         if (convert_as_inline

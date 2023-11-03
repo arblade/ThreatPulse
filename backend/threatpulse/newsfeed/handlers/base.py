@@ -25,6 +25,7 @@ class BaseFeedHandler(metaclass=ABCMeta):
         "Connection": "keep-alive",
         "Accept-Language": "en-US;q=0.8"
     }
+    feed_url: str = None
     
     def __init__(self, url: str) -> "BaseFeedHandler":
         self.url = url
@@ -46,10 +47,18 @@ class BaseFeedHandler(metaclass=ABCMeta):
             logger.error(f"cannot find the slug in {self.url}")
             return None
         slug = slug_re[-1]
-        logger.debug(f"save_markdown: slug = {slug}")    
+        logger.debug(f"save_markdown: slug = {slug}")  
+        
+        # compute the file path
+        file_path = os.path.join(data_folder, self.name, f"{slug}.md")
+        folder_path = os.path.dirname(file_path)
+        
+        # create the folder if they do not exist
+        if not os.path.exists(folder_path):
+            logger.info(f"creating data folder: {folder_path}")
+            os.makedirs(folder_path)
         
         # save the text to the disk
-        file_path = os.path.join(data_folder, f"{slug}.md")
         with open(file_path, "w") as f:
             f.write(md_text)
         
@@ -58,4 +67,8 @@ class BaseFeedHandler(metaclass=ABCMeta):
             
     @abstractmethod
     def parse(self, content: str):
+        pass
+    
+    @abstractmethod
+    def get_latest_news(self):
         pass
