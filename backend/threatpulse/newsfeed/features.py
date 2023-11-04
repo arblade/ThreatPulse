@@ -32,14 +32,17 @@ class Feature:
 def get_keywords_from_markdown(text: str, limit: int = 10, score_threshold: int = 14):
     # cleanup text
     # remove images
-    text = re.sub(r"!\[(.+?)\]\(.+?\)", r"", text)
-    # remove links
-    text = re.sub(r"\[(.+?)\]\(.+?\)", r"\1", text)
+    text = re.sub(r"!\[(.*?)\]\(.+?\)", r"", text)
+    # remove links but keep the text
+    text = re.sub(r"\[(.*?)\]\(.+?\)", r"\1", text)
     # remove styling
     text = text.replace("**", "")
     text = text.replace("### ", "")
     text = text.replace("## ", "")
     text = text.replace("# ", "")
+    
+    with open("res.md", "w") as f:
+        f.write(text)
     
     # download models
     nltk.download("stopwords", quiet=True)
