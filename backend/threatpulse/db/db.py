@@ -66,4 +66,9 @@ class DB:
             return None
         
         return article.get_text()
+    
+    def is_url_in_db(self, url: str) -> bool:
+        cursor = self.conn.cursor()
+        row = cursor.execute(f"SELECT * FROM articles WHERE url='{url}';").fetchone()
+        return row is not None
         

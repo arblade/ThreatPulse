@@ -20,8 +20,8 @@ def parse_args():
     article_parser = subparsers.add_parser("parse", help="Parse an URL")
     article_parser.add_argument("url", help="Url to parse")
     
-    # test something
-    test_parser = subparsers.add_parser("test", help="Test a new feature")
+    # fetch latest articles
+    fetch_parser = subparsers.add_parser("fetch", help="Fetch latest articles")
     
     return parser.parse_args()
     
@@ -54,7 +54,7 @@ def main():
         uvicorn.run(app="threatpulse.api.api:app", host=args.host, port=args.port, log_level=logger.level)
         
     # else testing new features
-    elif args.command == "test":
+    elif args.command == "fetch":
         from .newsfeed.handlers import HANDLERS
         
         # init the DB
@@ -65,12 +65,17 @@ def main():
             handler = HandlerClass(None)
             urls = handler.get_latest_news()
             for url in urls:
+                # if url is already in db, skip it
+                if db.is_url_in_db(url):
+                    logger.info(f"Url {url} is already in the DB, skipping it")
+                    continue
+                
                 handler = HandlerClass(url)
                 content = handler.fetch()
                 try:
                     article = handler.parse(content)
                     db.add_article(article)
                 except Exception as e:
-                    logger.error(e)
+                    logger.error(f"Error while parsing url: {url}\n{e}")
                     traceback.print_exc()
                     continue

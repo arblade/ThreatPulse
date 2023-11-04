@@ -48,6 +48,9 @@ class CheckPointResearchHandler(BaseFeedHandler):
         # iocs = [ioc.text for ioc in post.find(id="iocs").findNext("pre").contents if isinstance(ioc, NavigableString)]
         # iocs = [ioc for ioc_list in iocs for ioc in ioc_list.split(" ")]
         
+        if post is None:
+            logger.error("Could not find the post in the page")
+        
         # save the article
         file_path, md_text = self.save_markdown(post)
         
@@ -66,7 +69,7 @@ class CheckPointResearchHandler(BaseFeedHandler):
         soup = BeautifulSoup(res.text, "html.parser")
 
         posts = soup.find("section", {"class": "blog-post-wrapper"})
-        for link in posts.find_all("div", {"class": "button-wrap"}):
+        for link in posts.find_all("div", {"class": "desktop-view-socialshare"}):
             urls.append(link.find("a")["href"])
 
         logger.info(f"got {len(urls)} urls from feed")
