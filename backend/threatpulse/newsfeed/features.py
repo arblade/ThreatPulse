@@ -41,8 +41,9 @@ def get_keywords_from_markdown(text: str, limit: int = 10, score_threshold: int 
     text = text.replace("## ", "")
     text = text.replace("# ", "")
     
-    with open("res.md", "w") as f:
-        f.write(text)
+    # uncomment to write cleaned text to disk
+    # with open("res.md", "w") as f:
+    #     f.write(text)
     
     # download models
     nltk.download("stopwords", quiet=True)
@@ -55,6 +56,11 @@ def get_keywords_from_markdown(text: str, limit: int = 10, score_threshold: int 
     # process best words
     keywords_scored = sorted(r.get_word_degrees().items(), key=lambda x: x[1], reverse=True)
     keywords_scored = [k for k in keywords_scored if k[1] >= score_threshold and len(k[0]) >= 3 and not k[0].isdigit()]
+    
+    # remove IOCS
+    # TODO: find better detection system
+    keywords_scored = [k for k in keywords_scored if len(k[0]) != 40 and k[0] != "[.]"]
+    
     keywords = [k for k in keywords_scored[:limit]]
     
     return keywords

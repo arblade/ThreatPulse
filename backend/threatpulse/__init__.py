@@ -1,6 +1,7 @@
 import argparse
 import json
 import traceback
+import threading
 
 from .logger import setup_logger
 from .db.db import DB
@@ -43,7 +44,7 @@ def main():
         
         # fetch and parse the content
         content = handler.fetch()
-        md_text = handler.parse(content)
+        article = handler.parse(content)
         
         # init the db
         db = DB()
@@ -57,11 +58,12 @@ def main():
     elif args.command == "fetch":
         from .newsfeed.handlers import HANDLERS
         
-        # init the DB
-        db = DB()
         
-        for HandlerClass in HANDLERS:
-            logger.info(f"Fetching new content for {HandlerClass.name}")
+        def fetch(HandlerClass):
+            # init the DB
+            db = DB()
+            
+            # get urls on the feed page
             handler = HandlerClass(None)
             urls = handler.get_latest_news()
             for url in urls:
@@ -79,3 +81,13 @@ def main():
                     logger.error(f"Error while parsing url: {url}\n{e}")
                     traceback.print_exc()
                     continue
+        
+        threads = [None for _ in range(len(HANDLERS))]
+        for i, HandlerClass in enumerate(HANDLERS):
+            logger.info(f"Fetching new content for {HandlerClass.name}")
+            threads[i] = threading.Thread(target=fetch, args=[HandlerClass])
+            threads[i].start()
+            
+        for i in range(len(HANDLERS)):
+            threads[i].join()
+            
