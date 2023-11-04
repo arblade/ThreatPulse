@@ -28,11 +28,13 @@ class Analyst1Handler(BaseFeedHandler):
             div.decompose()
         for el in post.find_all("span", {"class": "ez-toc-title-toggle"}):
             el.decompose()
+        for div in post.find_all("div", {"class": "content-single__info"}):
+            div.decompose()
         
         # save the article
-        file_path = self.save_markdown(post)
+        md_text = self.save_markdown(post)
         
-        return file_path
+        return md_text
     
     def get_latest_news(self) -> list[str]:
         urls = []

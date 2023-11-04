@@ -32,9 +32,9 @@ class BleepingComputer(BaseFeedHandler):
             
         
         # save the article
-        file_path = self.save_markdown(post)
+        md_text = self.save_markdown(post)
         
-        return file_path
+        return md_text
     
     def get_latest_news(self) -> list[str]:
         urls = []

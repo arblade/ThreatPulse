@@ -39,9 +39,9 @@ class CheckPointResearchHandler(BaseFeedHandler):
         # iocs = [ioc for ioc_list in iocs for ioc in ioc_list.split(" ")]
         
         # save the article
-        self.save_markdown(post)
+        md_text = self.save_markdown(post)
         
-        return []
+        return md_text
     
     def get_latest_news(self) -> list[str]:
         urls = []

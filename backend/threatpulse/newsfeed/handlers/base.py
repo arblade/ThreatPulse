@@ -63,7 +63,7 @@ class BaseFeedHandler(metaclass=ABCMeta):
             f.write(md_text)
         
         # returrn the path
-        return file_path
+        return md_text
             
     @abstractmethod
     def parse(self, content: str):
