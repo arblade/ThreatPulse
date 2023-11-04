@@ -6,6 +6,7 @@ import os
 from bs4 import BeautifulSoup
 
 from ..mdconverter import MDConverter
+from ...db.models import Article
 
 logger = logging.getLogger("basefeedhandler")
 
@@ -34,7 +35,7 @@ class BaseFeedHandler(metaclass=ABCMeta):
         res = requests.get(self.url, headers=self.headers)
         return res.text
     
-    def save_markdown(self, soup: BeautifulSoup, data_folder: str = "./data") -> str:
+    def save_markdown(self, soup: BeautifulSoup, data_folder: str = "./data") -> (str, str):
         md_text = MDConverter(self, heading_style="ATX").convert_soup(soup)
         
         # post processing
@@ -63,10 +64,10 @@ class BaseFeedHandler(metaclass=ABCMeta):
             f.write(md_text)
         
         # returrn the path
-        return md_text
+        return file_path, md_text
             
     @abstractmethod
-    def parse(self, content: str):
+    def parse(self, content: str) -> Article:
         pass
     
     @abstractmethod

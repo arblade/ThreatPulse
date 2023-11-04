@@ -1,9 +1,13 @@
 import re
+import datetime
 import logging
 import requests
 from bs4 import BeautifulSoup
 import xml.etree.ElementTree as xml_ET
 
+
+from ..features import get_keywords_from_markdown
+from ...db.models import Article
 from .base import BaseFeedHandler
 
 logger = logging.getLogger("bleepingcomputer")
@@ -32,9 +36,15 @@ class BleepingComputer(BaseFeedHandler):
             
         
         # save the article
-        md_text = self.save_markdown(post)
+        file_path, md_text = self.save_markdown(post)
         
-        return md_text
+        # get keywords
+        keywords = get_keywords_from_markdown(md_text, limit=5)
+        logger.info(f"Keywords: {keywords}")
+        
+        # build the article object
+        article = Article(None, self.url, datetime.datetime.now(), file_path, [], keywords)
+        return article
     
     def get_latest_news(self) -> list[str]:
         urls = []

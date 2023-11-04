@@ -1,11 +1,12 @@
 import re
 import logging
 import requests
+import datetime
 from bs4 import BeautifulSoup
-from bs4.element import NavigableString
 
 from .base import BaseFeedHandler
-from ..mdconverter import MDConverter
+from ..features import get_keywords_from_markdown
+from ...db.models import Article
 
 logger = logging.getLogger("checkpointresearch")
 
@@ -27,21 +28,36 @@ class CheckPointResearchHandler(BaseFeedHandler):
         post = soup.find(id="single-post")
         
         # cleanup
-        for div in post.find_all("div", {"class": "aside-box"}):
-            div.decompose()
-        for div in post.find_all("div", {"class": "back-to-top"}):
-            div.decompose()
-        for div in post.find_all("div", {"class": "button-wrap"}):
-            div.decompose()
+        try:
+            for div in post.find_all("div", {"class": "aside-box"}):
+                div.decompose()
+        except:
+            pass
+        try:
+            for div in post.find_all("div", {"class": "back-to-top"}):
+                div.decompose()
+        except:
+            pass
+        try:
+            for div in post.find_all("div", {"class": "button-wrap"}):
+                div.decompose()
+        except:
+            pass
 
         # extract iocs
         # iocs = [ioc.text for ioc in post.find(id="iocs").findNext("pre").contents if isinstance(ioc, NavigableString)]
         # iocs = [ioc for ioc_list in iocs for ioc in ioc_list.split(" ")]
         
         # save the article
-        md_text = self.save_markdown(post)
+        file_path, md_text = self.save_markdown(post)
         
-        return md_text
+        # get keywords
+        keywords = get_keywords_from_markdown(md_text, limit=5)
+        logger.info(f"Keywords: {keywords}")
+        
+        # build the article object
+        article = Article(None, self.url, datetime.datetime.now(), file_path, [], keywords)
+        return article
     
     def get_latest_news(self) -> list[str]:
         urls = []

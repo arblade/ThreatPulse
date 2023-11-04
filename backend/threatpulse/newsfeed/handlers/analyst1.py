@@ -1,9 +1,12 @@
 import re
+import datetime
 import logging
 import requests
 from bs4 import BeautifulSoup
 
 from .base import BaseFeedHandler
+from ..features import get_keywords_from_markdown
+from ...db.models import Article
 
 logger = logging.getLogger("analyst1")
 
@@ -19,7 +22,7 @@ class Analyst1Handler(BaseFeedHandler):
         # update base headers
         self.headers["Referer"] = "https://analyst1.com/category/blog/"
         
-    def parse(self, content: str):
+    def parse(self, content: str) -> Article:
         soup = BeautifulSoup(content, "html.parser")
         post = soup.findAll("article", {"class": "post"})[0]       
         
@@ -32,9 +35,15 @@ class Analyst1Handler(BaseFeedHandler):
             div.decompose()
         
         # save the article
-        md_text = self.save_markdown(post)
+        file_path, md_text = self.save_markdown(post)
         
-        return md_text
+        # get keywords
+        keywords = get_keywords_from_markdown(md_text, limit=5)
+        logger.info(f"Keywords: {keywords}")
+        
+        # build the article object
+        article = Article(None, self.url, datetime.datetime.now(), file_path, [], keywords)
+        return article
     
     def get_latest_news(self) -> list[str]:
         urls = []

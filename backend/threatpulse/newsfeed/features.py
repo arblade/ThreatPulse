@@ -1,5 +1,8 @@
 from dataclasses import dataclass
 from enum import Enum
+import re
+import nltk
+from rake_nltk import Rake
 
 class FeatureType(Enum):
     IoC_DNS = 1
@@ -25,3 +28,30 @@ class Feature:
     @staticmethod
     def from_json(data: dict) -> "Feature":
         return Feature(data["type"], data["value"])
+    
+def get_keywords_from_markdown(text: str, limit: int = 10, score_threshold: int = 14):
+    # cleanup text
+    # remove images
+    text = re.sub(r"!\[(.+?)\]\(.+?\)", r"", text)
+    # remove links
+    text = re.sub(r"\[(.+?)\]\(.+?\)", r"\1", text)
+    # remove styling
+    text = text.replace("**", "")
+    text = text.replace("### ", "")
+    text = text.replace("## ", "")
+    text = text.replace("# ", "")
+    
+    # download models
+    nltk.download("stopwords", quiet=True)
+    nltk.download("punkt", quiet=True)
+    
+    # extract keywords
+    r = Rake()
+    r.extract_keywords_from_text(text)
+    
+    # process best words
+    keywords_scored = sorted(r.get_word_degrees().items(), key=lambda x: x[1], reverse=True)
+    keywords_scored = [k for k in keywords_scored if k[1] >= score_threshold and len(k[0]) >= 3 and not k[0].isdigit()]
+    keywords = [k for k in keywords_scored[:limit]]
+    
+    return keywords
