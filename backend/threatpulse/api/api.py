@@ -13,19 +13,23 @@ logger = logging.getLogger("api")
 logging.getLogger("uvicorn").handlers = logging.getLogger().handlers
 logging.getLogger("uvicorn.access").handlers = logging.getLogger().handlers
 
+
 @app.get("/health")
 def healthcheck():
     return "healthy"
 
-@app.get("/article")
+
+@app.get("/articles")
 def list_articles():
     db = DB()
     return db.get_articles()
+
 
 @app.get("/article/{url}")
 def get_article(url: str):
     db = DB()
     return db.get_article(url)
+
 
 @app.get("/article/{url}/text", response_class=PlainTextResponse)
 def get_article_text(url: str):
