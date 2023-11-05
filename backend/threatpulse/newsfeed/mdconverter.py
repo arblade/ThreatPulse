@@ -21,8 +21,12 @@ class MDConverter(OriginalConverter):
             return ""
         
         # if the source is already base64, return it
-        if ";base64," in src:
+        if ";base64" in src:
             return "![%s](%s%s)" % (alt, src, title_part)
+        
+        # TODO: handle svg pictures
+        if "data:image/svg" in src:
+            return ""
         
         # fetch the image
         logger.debug(f"Downloading img from {src}")
