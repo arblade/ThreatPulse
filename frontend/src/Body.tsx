@@ -6,11 +6,14 @@ import Loader from "./components/Loader";
 import { useToast } from "@/components/ui/use-toast";
 import { Toaster } from "@/components/ui/toaster";
 export interface Article {
+  id: number;
   title: string;
   description: string;
-  image_url: string;
-  badges: string[];
-  link: string;
+  illustration: string;
+  keywords: string[];
+  features: string[];
+  date: string;
+  url: string;
   source: string;
 }
 
@@ -21,7 +24,7 @@ export function Body() {
     error,
     data: articles,
   } = useQuery<Article[], Error>("repoData", () => {
-    return fetch("/api/get_articles").then((res) => {
+    return fetch("/api/articles").then((res) => {
       if (!res.ok) {
         throw new Error(res.statusText);
       }
@@ -48,7 +51,7 @@ export function Body() {
             </span>{" "}
             of the day is here ...
           </div>
-          <div className="flex justify-start items-center flex-col space-y-2">
+          <div className="flex justify-start items-center flex-col space-y-2 max-h-[calc(100vh-170px)] overflow-auto">
             <div className="flex flex-col space-y-4">
               {isLoading ? (
                 <Loader />
@@ -56,7 +59,7 @@ export function Body() {
                 <div>
                   {articles &&
                     articles!.map((art) => (
-                      <div key={"art_" + art.title}>
+                      <div key={"art_" + art.id}>
                         <Card article={art} />
                       </div>
                     ))}
