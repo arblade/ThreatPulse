@@ -16,7 +16,7 @@ export function SideMenu() {
           <Sword size={20} /> <div>Hunt</div>
         </div>
         <div className="flex items-center justify-start space-x-3  hover:bg-gray-100 px-2 py-1 hover:cursor-pointer rounded-lg pl-4">
-          <Bookmark size={20} /> <div>Favorites</div>
+          <Bookmark size={18} /> <div>Favorites</div>
         </div>
       </div>
     </div>
