@@ -52,7 +52,7 @@ def main():
     # serving the API
     elif args.command == "serve":
         import uvicorn
-        uvicorn.run(app="threatpulse.api.api:app", host=args.host, port=args.port, log_level=logger.level)
+        uvicorn.run(app="threatpulse.api.api:app", host=args.host, port=args.port, log_level=logger.level, reload=True)
         
     # else testing new features
     elif args.command == "fetch":
