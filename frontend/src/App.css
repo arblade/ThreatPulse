@@ -1,0 +1,42 @@
+@font-face {
+  font-family: 'Geist';
+  src: url('/fonts/Geist-Regular.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+
+  /* Add other font properties like font-weight and font-style if needed */
+}
+
+@font-face {
+  font-family: 'Geist';
+  src:url('/fonts/Geist-SemiBold.otf') format('opentype');
+  font-weight: 600;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Geist';
+  src:url('/fonts/Geist-Medium.otf') format('opentype');
+  font-weight: 500; /* 500 represents medium weight */
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Geist';
+  src:url('/fonts/Geist-Bold.otf') format('opentype');
+  font-weight: bold;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Inter";
+  src: url('/fonts/Inter-Bold.ttf') format("truetype");
+  font-weight: bold;
+  font-style: normal;
+}
+
+
+body {
+  font-family: 'Geist', sans-serif;
+}
+
