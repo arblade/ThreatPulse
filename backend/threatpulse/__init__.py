@@ -8,28 +8,33 @@ from .db.db import DB
 
 logger = setup_logger()
 
+
 def parse_args():
     parser = argparse.ArgumentParser(prog="ctiexplorer")
     subparsers = parser.add_subparsers(title="commands", dest="command")
-    
+
     # serve the api
     api_parser = subparsers.add_parser("serve", help="Serve the API")
-    api_parser.add_argument("--host", help="Host on which serving the API", default="0.0.0.0")
-    api_parser.add_argument("-p", "--port", help="Port on which serving the API", default=1234)
-    
+    api_parser.add_argument(
+        "--host", help="Host on which serving the API", default="0.0.0.0"
+    )
+    api_parser.add_argument(
+        "-p", "--port", help="Port on which serving the API", default=1234, type=int
+    )
+
     # parse an url
     article_parser = subparsers.add_parser("parse", help="Parse an URL")
     article_parser.add_argument("url", help="Url to parse")
-    
+
     # fetch latest articles
     fetch_parser = subparsers.add_parser("fetch", help="Fetch latest articles")
-    
+
     return parser.parse_args()
-    
+
 
 def main():
     args = parse_args()
-    
+
     # parsing an article
     if args.command == "parse":
         from .newsfeed.feed import find_handler
@@ -41,28 +46,33 @@ def main():
             logger.error(f"No suitable handler found for site: {args.url}")
             return
         handler = HandlerClass(args.url)
-        
+
         # fetch and parse the content
         content = handler.fetch()
         article = handler.parse(content)
-        
+
         # init the db
         db = DB()
-        
+
     # serving the API
     elif args.command == "serve":
         import uvicorn
-        uvicorn.run(app="threatpulse.api.api:app", host=args.host, port=args.port, log_level=logger.level)
-        
+
+        uvicorn.run(
+            app="threatpulse.api.api:app",
+            host=args.host,
+            port=args.port,
+            log_level=logger.level,
+        )
+
     # else testing new features
     elif args.command == "fetch":
         from .newsfeed.handlers import HANDLERS
-        
-        
+
         def fetch(HandlerClass):
             # init the DB
             db = DB()
-            
+
             # get urls on the feed page
             handler = HandlerClass(None)
             urls = handler.get_latest_news()
@@ -71,7 +81,7 @@ def main():
                 if db.is_url_in_db(url):
                     logger.info(f"Url {url} is already in the DB, skipping it")
                     continue
-                
+
                 handler = HandlerClass(url)
                 content = handler.fetch()
                 try:
@@ -81,13 +91,12 @@ def main():
                     logger.error(f"Error while parsing url: {url}\n{e}")
                     traceback.print_exc()
                     continue
-        
+
         threads = [None for _ in range(len(HANDLERS))]
         for i, HandlerClass in enumerate(HANDLERS):
             logger.info(f"Fetching new content for {HandlerClass.name}")
             threads[i] = threading.Thread(target=fetch, args=[HandlerClass])
             threads[i].start()
-            
+
         for i in range(len(HANDLERS)):
             threads[i].join()
-            
