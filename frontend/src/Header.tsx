@@ -1,6 +1,5 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "./components/ui/button";
-import { Bookmark } from "lucide-react";
+
 import { SideMenu } from "./SideMenu";
 
 export default function Header() {
