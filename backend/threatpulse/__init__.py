@@ -63,6 +63,7 @@ def main():
             host=args.host,
             port=args.port,
             log_level=logger.level,
+            reload=True,
         )
 
     # else testing new features
