@@ -41,6 +41,10 @@ def get_keywords_from_markdown(text: str, limit: int = 10, score_threshold: int 
     text = text.replace("## ", "")
     text = text.replace("# ", "")
     
+    # TODO: remove ?
+    # remove code blocks
+    text = re.sub(r"```[.\w\n\r :\-\>\<\[\]\/\+\"“]*```", r"", text)
+    
     # uncomment to write cleaned text to disk
     # with open("res.md", "w") as f:
     #     f.write(text)
