@@ -68,7 +68,8 @@ def main():
 
     # else testing new features
     elif args.command == "fetch":
-        from .newsfeed.handlers import HANDLERS
+        from .newsfeed.handlers import HANDLERS as H
+        HANDLERS = [H[-1]]
 
         def fetch(HandlerClass):
             # init the DB

@@ -2,13 +2,15 @@ import logging
 import requests
 from base64 import b64encode
 from markdownify import MarkdownConverter as OriginalConverter, chomp
+from urllib.parse import urljoin
 
 logger = logging.getLogger("mdconverter")
 
 class MDConverter(OriginalConverter):
-    def __init__(self, handler, **options):
+    def __init__(self, handler, url, **options):
         super().__init__(**options)
         self.handler = handler
+        self.url = url
     
     def convert_img(self, el, text, convert_as_inline):
         alt = el.attrs.get('alt', None) or ''
@@ -27,6 +29,10 @@ class MDConverter(OriginalConverter):
         # TODO: handle svg pictures
         if "data:image/svg" in src:
             return ""
+        
+        # if the path is relative
+        if not src.startswith("http://") and not src.startswith("https://"):
+            src = urljoin(self.url, src)
         
         # fetch the image
         logger.debug(f"Downloading img from {src}")
@@ -60,5 +66,9 @@ class MDConverter(OriginalConverter):
         # if an anchor
         if href.startswith("#"):
             href = href.replace("_", "-").lower()
+            
+        # if a relative path
+        if href.startswith("/"):
+            href = urljoin(self.url, href)
         
         return '%s[%s](%s%s)%s' % (prefix, text, href, title_part, suffix) if href else text

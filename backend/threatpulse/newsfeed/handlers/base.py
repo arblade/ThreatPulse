@@ -36,11 +36,12 @@ class BaseFeedHandler(metaclass=ABCMeta):
         return res.text
     
     def save_markdown(self, soup: BeautifulSoup, data_folder: str = "./data") -> (str, str):
-        md_text = MDConverter(self, heading_style="ATX").convert_soup(soup)
+        md_text = MDConverter(handler=self, url=self.url, heading_style="ATX").convert_soup(soup)
         
         # post processing
         md_text = md_text.strip()
         md_text = md_text.replace("\n\n", "\n")
+        md_text = md_text.replace("# \n", "# ")
         
         # get name from url
         slug_re = re.findall(r"/([\w-]+)", self.url, re.IGNORECASE)
